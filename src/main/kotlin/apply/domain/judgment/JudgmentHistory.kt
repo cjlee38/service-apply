@@ -27,7 +27,7 @@ class JudgmentHistory(
 
     @Column
     @Embedded
-    val result: JudgmentResult? = null,
+    var result: JudgmentResult? = null,
 
     id: Long = 0L
 ) : BaseEntity(id) {
@@ -39,4 +39,12 @@ class JudgmentHistory(
     private fun isResultOK(): Boolean = result?.isOK ?: false
 
     private fun isExampleType() = judgmentType == JudgmentType.EXAMPLE
+
+    fun insertPassResult(passCount: Int, totalCount: Int) {
+        result = JudgmentResult(passCount, totalCount, JudgmentStatusCode.OK)
+    }
+
+    fun insertFailResult(statusCode: JudgmentStatusCode) {
+        result = JudgmentResult(null, null, statusCode)
+    }
 }

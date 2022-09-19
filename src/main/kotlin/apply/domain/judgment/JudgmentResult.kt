@@ -8,10 +8,10 @@ import javax.persistence.Enumerated
 @Embeddable
 class JudgmentResult(
     @Column
-    val passCount: Int,
+    val passCount: Int?,
 
     @Column
-    val totalCount: Int,
+    val totalCount: Int?,
 
     @Column
     @Enumerated(EnumType.STRING)

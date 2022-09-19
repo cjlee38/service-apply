@@ -5,6 +5,8 @@ import apply.createJudgmentHistoryResult
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.nulls.shouldNotBeNull
+import io.kotest.matchers.shouldBe
 
 class JudgmentHistoryTest : StringSpec({
     "커밋 해쉬가 다르면 자동 채점이 가능하다" {
@@ -43,5 +45,23 @@ class JudgmentHistoryTest : StringSpec({
         val isCompleted = judgmentHistory.isCompleted(judgmentHistory.commitHash)
 
         isCompleted.shouldBeFalse()
+    }
+
+    "성공한 자동채점 결과를 입력한다" {
+        val judgmentHistory = createJudgmentHistory()
+
+        judgmentHistory.insertPassResult(5, 10)
+
+        judgmentHistory.result.shouldNotBeNull()
+        judgmentHistory.result?.statusCode shouldBe JudgmentStatusCode.OK
+    }
+
+    "실패한 자동채점 결과를 입력한다" {
+        val judgmentHistory = createJudgmentHistory()
+
+        judgmentHistory.insertFailResult(JudgmentStatusCode.INTERNAL_SERVER_ERROR)
+
+        judgmentHistory.result.shouldNotBeNull()
+        judgmentHistory.result!!.totalCount shouldBe null
     }
 })
