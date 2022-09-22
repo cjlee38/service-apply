@@ -1,5 +1,6 @@
 package apply.domain.judgment
 
+import apply.REQUEST_KEY
 import apply.createJudgmentHistory
 import apply.domain.judgment.JudgmentType.EXAMPLE
 import apply.domain.judgment.JudgmentType.REAL
@@ -7,6 +8,7 @@ import io.kotest.core.spec.style.ExpectSpec
 import io.kotest.extensions.spring.SpringTestExtension
 import io.kotest.extensions.spring.SpringTestLifecycleMode
 import io.kotest.matchers.collections.shouldContainExactly
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import support.test.RepositoryTest
 
@@ -50,6 +52,16 @@ class JudgmentHistoryRepositoryTest(
             val histories = judgmentHistoryRepository.findAllLastOfRealsByMissionId(1L)
 
             histories.map { it.id } shouldContainExactly listOf(2L, 4L, 7L, 8L)
+        }
+
+        expect("request key로 실행 이력을 찾는다") {
+            judgmentHistoryRepository.save(createJudgmentHistory(
+                requestKey = "find-by-request-key"
+            ))
+
+            val history = judgmentHistoryRepository.findByRequestKey("find-by-request-key")
+
+            history.shouldNotBeNull()
         }
     }
 })

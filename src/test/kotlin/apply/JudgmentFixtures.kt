@@ -1,10 +1,13 @@
 package apply
 
+import apply.application.JudgmentFailRequest
 import apply.application.JudgmentHistoryResponse
+import apply.application.JudgmentPassRequest
 import apply.application.TestStatus
 import apply.application.github.CommitResponse
 import apply.application.judgmentserver.JudgmentRequest
 import apply.domain.judgment.Commit
+import apply.domain.judgment.JudgmentFailCause
 import apply.domain.judgment.JudgmentHistory
 import apply.domain.judgment.JudgmentItem
 import apply.domain.judgment.JudgmentResult
@@ -82,4 +85,28 @@ fun createJudgmentItem(
     id: Long = 0L
 ): JudgmentItem {
     return JudgmentItem(missionId, evaluationItemId, testName, programmingLanguage, id)
+}
+
+fun createJudgmentPassRequest(
+    requestKey: String = REQUEST_KEY,
+    passCount: Int = 5,
+    totalCount: Int = 10
+): JudgmentPassRequest {
+    return JudgmentPassRequest(requestKey, passCount, totalCount)
+}
+
+fun createJudgmentFailRequest(
+    requestKey: String = REQUEST_KEY,
+    statusCode: JudgmentStatusCode = JudgmentStatusCode.INTERNAL_SERVER_ERROR,
+    message: String? = ""
+): JudgmentFailRequest {
+    return JudgmentFailRequest(requestKey, statusCode, message)
+}
+
+fun createJudgmentFailCause(
+    requestKey: String = REQUEST_KEY,
+    message: String = "internal-server-error happened",
+    id: Long = 0L
+): JudgmentFailCause {
+    return JudgmentFailCause(requestKey, message, id)
 }

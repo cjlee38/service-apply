@@ -3,12 +3,15 @@ package apply.application
 import apply.application.judgmentserver.JudgmentRequest
 import apply.domain.assignment.Assignment
 import apply.domain.judgment.Commit
+import apply.domain.judgment.JudgmentFailCause
+import apply.domain.judgment.JudgmentFailCauseRepository
 import apply.domain.judgment.JudgmentHistory
 import apply.domain.judgment.JudgmentHistoryRepository
 import apply.domain.judgment.JudgmentItemRepository
 import apply.domain.judgment.JudgmentType
 import apply.domain.judgment.findLastByUserIdAndMissionIdAndJudgmentType
 import apply.domain.judgment.getByMissionId
+import apply.domain.judgment.getByRequestKey
 import apply.domain.judgmentserver.JudgmentServer
 import org.springframework.stereotype.Service
 
@@ -16,6 +19,7 @@ import org.springframework.stereotype.Service
 class JudgmentHistoryService(
     private val judgmentHistoryRepository: JudgmentHistoryRepository,
     private val judgmentItemRepository: JudgmentItemRepository,
+    private val judgmentFailCauseRepository: JudgmentFailCauseRepository,
     private val judgmentServer: JudgmentServer
 ) {
     fun findOrCreateHistory(
@@ -57,5 +61,19 @@ class JudgmentHistoryService(
                 item.programmingLanguage!!
             )
         )
+    }
+
+    /*
+    TODO : update evaluation answer score by judgment result
+     */
+    fun reflectPassResult(judgmentPassRequest: JudgmentPassRequest) {
+        val judgmentHistory = judgmentHistoryRepository.getByRequestKey(judgmentPassRequest.requestKey)
+        judgmentHistory.insertPassResult(judgmentPassRequest.passCount, judgmentPassRequest.totalCount)
+    }
+
+    fun reflectFailResult(judgmentFailRequest: JudgmentFailRequest) {
+        val judgmentHistory = judgmentHistoryRepository.getByRequestKey(judgmentFailRequest.requestKey)
+        judgmentHistory.insertFailResult(judgmentFailRequest.statusCode)
+        judgmentFailCauseRepository.save(JudgmentFailCause(judgmentFailRequest.requestKey, judgmentFailRequest.message))
     }
 }

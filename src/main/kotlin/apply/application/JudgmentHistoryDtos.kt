@@ -1,6 +1,7 @@
 package apply.application
 
 import apply.domain.judgment.JudgmentHistory
+import apply.domain.judgment.JudgmentStatusCode
 
 data class JudgmentHistoryResponse(
     val testStatus: TestStatus,
@@ -23,6 +24,18 @@ data class JudgmentHistoryResponse(
         fun toCommitUrl(pullRequestUrl: String, commitHash: String): String = "$pullRequestUrl/commits/$commitHash"
     }
 }
+
+data class JudgmentPassRequest(
+    val requestKey: String,
+    val passCount: Int,
+    val totalCount: Int
+)
+
+data class JudgmentFailRequest(
+    val requestKey: String,
+    val statusCode: JudgmentStatusCode,
+    val message: String?
+)
 
 enum class TestStatus {
     NONE, PENDING, COMPLETED
